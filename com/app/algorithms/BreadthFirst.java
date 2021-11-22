@@ -8,7 +8,7 @@ public class BreadthFirst {
     static int r,c,s1,s2,f1,f2;//Rows, Columns, Start Coordinates, Finish Coordinates
     static int[] dx={1,-1,0,0};//right, left, NA, NA
     static int[] dy={0,0,1,-1};//NA, NA, bottom, top
-    static char[][] grid;//Main grid
+    static char[][] grid;//e grid
     public BreadthFirst()
     {
         Scanner sc=new Scanner(System.in);//I suggest using faster IO if you have performance concerns.

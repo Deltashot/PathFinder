@@ -1,11 +1,11 @@
 import java.util.Arrays;
 
-public class GameBoard {
+public class Board {
 	private int[][] grid; // the grid that stores the pieces
 	public int lRow;
 	public int lCol;
 
-	public GameBoard(int width, int height) {
+	public Board(int width, int height) {
 		grid = new int[height][width];
 
 		// Initialize starting positions

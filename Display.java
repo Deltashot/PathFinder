@@ -1,5 +1,5 @@
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,11 +63,14 @@ public class Display {
         }
     }
 
-    public void DrawButtons(int[][] grid){
+    public ArrayList<Pair> DrawButtons(){
         ArrayList<Pair> buttons = new ArrayList<>();
+        ArrayList<ButtonInstance> buttonInstances = new ArrayList<>();
+
         int r = 100, g = 100, b = 100; //default color for all buttons
 
         int btnPosX = 620, btnPosY = 10, btnWid = 75, btnHei = 20;
+        //buttonInstances.add(new ButtonInstance());
         buttons.add(new Pair(new int[] {btnPosX, btnPosY, btnWid, btnHei, r, g, b}, "Simulate"));
 
         for (int i = 0; i < buttons.size(); i++){
@@ -81,6 +84,7 @@ public class Display {
             p.text(name, values[0], values[1]);
         }
 
+        return buttons;
     }
 
 
@@ -151,7 +155,7 @@ public class Display {
         dy = h / cols;
     }
 
-    public void initializeWithGame(GameBoard game) {
+    public void initializeWithGame(Board game) {
         int[][] grid = game.getGrid();
         if (grid == null) {
             System.out
@@ -163,7 +167,7 @@ public class Display {
     }
 
     // Draw a box at the location
-    public void DrawBoxAtPos(Location l, GameBoard g) {
+    public void DrawBoxAtPos(Location l, Board g) {
         if (g.isInGrid(l.getRow(),l.getCol())) {
             p.fill(p.color(50, 200, 50, 150));
             p.rect(xCoordOf(l), yCoordOf(l), dx, dy);

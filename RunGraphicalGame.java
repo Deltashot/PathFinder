@@ -1,8 +1,13 @@
+import javafx.util.Pair;
 import processing.core.*;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class RunGraphicalGame extends PApplet {
-	GameBoard game;
+	Board game;
 	Display display;
+	private ArrayList<Pair> Buttons = new ArrayList<>();
 
 	public void settings() {
 		size(750, 500);
@@ -10,7 +15,7 @@ public class RunGraphicalGame extends PApplet {
 
 	public void setup() {
 		// Create a game object
-		game = new GameBoard(5, 5);
+		game = new Board(10, 10);
 
 		// Create the display
 		// parameters: (10,10) is upper left of display
@@ -45,12 +50,10 @@ public class RunGraphicalGame extends PApplet {
 
 	@Override
 	public void draw() {
-
-
 		background(200);
 
 		display.drawGrid(game.getGrid()); //display the game
-		display.DrawButtons(game.getGrid());
+		Buttons = display.DrawButtons();
 	}
 
 	public void mouseClicked(){
@@ -72,13 +75,18 @@ public class RunGraphicalGame extends PApplet {
 		int row = loc.getRow();
 		int col = loc.getCol();
 
+		//Button btn = new Button();
+		//this.set(btn.getX(), btn.getY(), btn)
+
 		game.FieldPressed(row, col);
 
-		ButtonPressed(row, col);
+		CheckIfButtonPressed(mouseX, mouseY);
 	}
 
-	private void ButtonPressed(int row, int col) {
 
+
+	private void CheckIfButtonPressed(int row, int col) {
+		//for (int i = 0; i < mouse)
 	}
 
 	// main method to launch this Processing sketch from computer

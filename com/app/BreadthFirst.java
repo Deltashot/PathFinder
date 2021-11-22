@@ -1,6 +1,28 @@
 package com.app;
 
 import java.util.*;
+/**
+ * how this works is E is a movable spot, B is blocked and G is location (goal)
+ *
+ * if we enter something like this
+ *
+ * EEEE
+ * BBBE
+ * BBBE
+ * BBBG
+ *
+ * it will go from top left to top right then down and go to G through the E fields
+ *
+ * ALSO WE NEED TO TELL IT WHERE THE START POSITION IS
+ *
+ * WE DO THAT BY SETTING THE X AND Y POSITION OF START FROM CODE (INTEGERS)
+ *
+ * FOR EXAMPLE 0, 0 IS TOP LEFT
+ *
+ *
+ */
+
+
 
 /**
  * Created by Shreyans on 4/30/2015 at 10:27 PM using IntelliJ IDEA
@@ -11,7 +33,7 @@ class BreadthFirst
     static int r,c,s1,s2,f1,f2;//Rows, Columns, Start Coordinates, Finish Coordinates
     static int[] dx={1,-1,0,0};//right, left, NA, NA
     static int[] dy={0,0,1,-1};//NA, NA, bottom, top
-    static char[][] grid;//Main grid
+    static char[][] grid;//e grid
     public static void main(String[] args)
     {
         Scanner sc=new Scanner(System.in);//I suggest using faster IO if you have performance concerns.
@@ -28,10 +50,12 @@ class BreadthFirst
             System.arraycopy(s1,0,grid[i],0,c);//Nice inbuilt function to copy
             // contents of an array. Also doable manually
         }
-        s1=sc.nextInt()-1;
-        s2=sc.nextInt()-1;
-        f1=sc.nextInt()-1;
-        f2=sc.nextInt()-1;
+        s1=sc.nextInt();
+        s2=sc.nextInt();
+
+        //NOTE this is the finish position, its disabled because G is used as the final pos so there is no need for it
+        //f1=sc.nextInt();
+        //f2=sc.nextInt();
         if(MAZEBFS())
         {
             System.out.println("PATH EXISTS");
