@@ -3,26 +3,23 @@ package com.app;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.geom.Ellipse2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class DrawGrid extends JPanel {
-    Graphics test;
     boolean drawWorld;
 
-    ArrayList<Piece> pieces = new ArrayList<>();
+    private ArrayList<ArrayList<Piece>> pieces = new ArrayList<>();
 
-    public static int width;
-    private static int height;
+    private int xAxisPieces;
+    private int yAxisPieces;
 
-    private static final int rectWid = 50;
-    private static final int rectHei = 50;
-    private static final int rectX = rectWid + 10;
-    private static final int rectY = rectHei + 10;
-
-    private static final int gridOffsetX = 25;
-    private static final int gridOffsetY = 25;
+    public final int rectWid = 50;
+    public final int rectHei = rectWid;
+    private final int rectX = rectWid;
+    private final int rectY = rectHei;
 
 
     @Override
@@ -32,8 +29,6 @@ public class DrawGrid extends JPanel {
         //g.fillRect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT);
         //g.setColor(Color.BLACK);
         //g.drawRect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT);
-        test = g;
-
         DrawGrid(g);
 
         if (drawWorld)
@@ -43,53 +38,94 @@ public class DrawGrid extends JPanel {
             g.drawString("World", 10, 10);
     }
 
-    private ArrayList<Piece> DrawGrid(Graphics g){
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
+    private ArrayList<ArrayList<Piece>> DrawGrid(Graphics g){
+        for (int y = 0; y < yAxisPieces; y++) {
+            ArrayList<Piece> tempArr = new ArrayList<>();
+            for (int x = 0; x < xAxisPieces; x++) {
                 Graphics2D g2d = (Graphics2D) g;
-                Rectangle2D rect = new Rectangle2D.Double(x * rectX + gridOffsetX, y * rectY + gridOffsetY, rectWid, rectHei);
+                Rectangle2D rect = new Rectangle2D.Double(x * rectX, y * rectY, rectWid, rectHei);
 
                 g2d.setColor(Color.WHITE);
                 g2d.fill(rect);
                 g2d.setColor(Color.black);
                 g2d.draw(rect);
 
-                pieces.add(new Piece(rect, x, y));
+                tempArr.add(new Piece(rect, x, y));
             }
+            pieces.add(tempArr);
         }
+
+        new Listeners(pieces);
+
         return pieces;
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (drawWorld)
-            drawWorld = false;
-        else
-            drawWorld = true;
-        repaint();
-    }
 
+    /*
     @Override
     public Dimension getPreferredSize() {
         // so that our GUI is big enough
         return new Dimension(750, 500);
     }
+     */
 
     // create the GUI explicitly on the Swing event thread
-    public static void createAndShowGui(DrawGrid panel, JFrame frame, int width_, int height_) {
-
-
+    public void createAndShowGui(int xAxisPieces_, int yAxisPieces_) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                width = width_;
-                height = height_;
-
-                //JFrame frame = new JFrame("DrawRect");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.getContentPane().add(panel);
-                frame.pack();
-                frame.setVisible(true);
+                xAxisPieces = xAxisPieces_;
+                yAxisPieces = yAxisPieces_;
             }
         });
+    }
+
+    class Listeners implements MouseListener{
+        private ArrayList<ArrayList<Piece>> grid;
+
+        Listeners(ArrayList<ArrayList<Piece>> grid){
+            this.grid = grid;
+            System.out.println("[DEBUG] the listener doesn't register for some reason");
+
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            /**
+             * @TODO: 25-Nov-21 the listener doesn't seem to be working properly, fix it, it doesn't print anything in
+             *      console
+             *
+             */
+
+            System.out.println("[DEBUG] mouse pressed at " + e.getX() + " X pos and " + e.getY() + " Y pos");
+
+            /*
+            if ((e.getButton() == 1) && oval.contains(e.getX(), e.getY()) ) {
+                repaint();
+                // JOptionPane.showMessageDialog(null,e.getX()+ "\n" + e.getY());
+            }
+
+             */
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
     }
 
 }
