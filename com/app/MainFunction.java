@@ -1,14 +1,7 @@
 package com.app;
-
-import com.app.DrawGrid;
-import processing.core.PApplet;
-import processing.core.PImage;
-import processing.core.PSurface;
-
 import javax.swing.*;
-import java.awt.*;
 
-public class MainFunction {
+public class MainFunction{
     private static JFrame frame;
     //number of elements in X and Y axis
     private static final int gridWid = 10;

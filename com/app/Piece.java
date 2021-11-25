@@ -1,7 +1,5 @@
 package com.app;
 
-import javafx.util.Pair;
-
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -24,7 +22,39 @@ public class Piece {
         this.type = type;
     }
 
-    public Pair<Integer, Color> getType() {
+    public Piece(Rectangle2D rect){
+        this.rect = rect;
+    }
+
+    public Rectangle2D getRect() {
+        return rect;
+    }
+
+    public Color getColor(int type){
+        return Colors(type);
+    }
+
+    public Color getColor(){
+        return Colors(this.type);
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    private Color Colors(int type){
         /**
          * @param type used for differenciating the type of the current cell
          *             type 0: empty cell (default value), white
@@ -35,26 +65,26 @@ public class Piece {
          *             type 5: in queue for checking, darkBlue
          *             type 6: for displaying shortest path, yellow
          */
-        Color tempCol = new Color(0,0,0);
 
+        Color tempCol = new Color(0,0,0);
         switch (type) {
             case 0:
                 tempCol = Color.white;
                 break;
             case 1:
-                tempCol = Color.darkGray;
+                tempCol = new Color(64, 64, 64);
                 break;
             case 2:
                 tempCol = Color.RED;
                 break;
             case 3:
-                tempCol = new Color(0,100,0);
+                tempCol = new Color(0,128,0);
                 break;
             case 4:
                 tempCol = Color.BLUE;
                 break;
             case 5:
-                tempCol = new Color(0, 0, 100);
+                tempCol = new Color(0, 0, 128);
                 break;
             case 6:
                 tempCol = Color.yellow;
@@ -64,12 +94,9 @@ public class Piece {
                 type = -1;
                 break;
         }
-        return new Pair<>(type, tempCol);
+        return tempCol;
     }
 
-    public Piece(Rectangle2D rect){
-        this.rect = rect;
-    }
 
     //TODO add the different types here and a function that returns the color of each and something else if needed
 }
