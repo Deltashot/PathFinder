@@ -9,34 +9,39 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class DrawGrid extends JPanel {
-    private ArrayList<ArrayList<Piece>> pieces = new ArrayList<>();
+    public ArrayList<ArrayList<Piece>> gridPieces = new ArrayList<>();
+    public Piece startPiece;
 
     private int xAxisPieces;
     private int yAxisPieces;
 
-    public final int rectWid = 50;
+    public final int rectWid = 30;
     public final int rectHei = rectWid;
     private final int rectX = rectWid;
     private final int rectY = rectHei;
 
-    public Piece pieceForRepainting = null;
+    public ArrayList<Piece> pieceForRepainting = new ArrayList<>();
     private boolean gridDrawn = false;
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (pieceForRepainting != null) {
+        if (!pieceForRepainting.isEmpty()) {
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(pieceForRepainting.getColor());
-            g2d.fill(pieceForRepainting.getRect());
-            g2d.setColor(Color.black);
-            g2d.draw(pieceForRepainting.getRect());
-            pieceForRepainting = null;
+            for (Piece tempPiece : pieceForRepainting) {
+                g2d.setColor(tempPiece.getColor());
+                g2d.fill(tempPiece.getRect());
+                g2d.setColor(Color.black);
+                g2d.draw(tempPiece.getRect());
+            }
+            pieceForRepainting.clear();
         } else if (!gridDrawn) {
             DrawGrid(g);
             gridDrawn = true;
+            drawStartPositions(g);
         } else
             System.out.println("[DEBUG] um trying to repaint something but there is nothing to repaint?");
+
         /**
          * @NOTE repainting the grid using DrawGrid is a bad idea because it will paint another grid on top of the first
          * one and add the elements to
@@ -44,9 +49,32 @@ public class DrawGrid extends JPanel {
          */
     }
 
+    private void drawStartPositions(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+
+        Rectangle2D tempRect;
+
+        Piece startPiece = gridPieces.get(0).get(0);
+        startPiece.setType(2);
+        tempRect = startPiece.getRect();
+        g2d.setColor(startPiece.getColor());
+        g2d.fill(tempRect);
+        g2d.setColor(Color.black);
+        g2d.draw(tempRect);
+        this.startPiece = startPiece;
+
+        Piece endPiece = gridPieces.get(yAxisPieces - 1).get(xAxisPieces - 1);
+        endPiece.setType(3);
+        tempRect = endPiece.getRect();
+        g2d.setColor(endPiece.getColor());
+        g2d.fill(tempRect);
+        g2d.setColor(Color.black);
+        g2d.draw(tempRect);
+    }
+
     private ArrayList<ArrayList<Piece>> DrawGrid(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
-        if (!pieces.isEmpty())
+        if (!gridPieces.isEmpty())
             System.out.println("[ERROR] there are already pieces when creating the grid wtf?");
 
         for (int y = 0; y < yAxisPieces; y++) {
@@ -59,10 +87,10 @@ public class DrawGrid extends JPanel {
                 g2d.draw(rect);
                 tempArr.add(new Piece(rect, x, y));
             }
-            pieces.add(tempArr);
+            gridPieces.add(tempArr);
         }
-        new GridListeners(pieces, this);
-        return pieces;
+        new GridListeners(gridPieces, this);
+        return gridPieces;
     }
 
     // create the GUI explicitly on the Swing event thread
@@ -136,7 +164,7 @@ public class DrawGrid extends JPanel {
                 } else {
                     pressed.setType(0);
                 }
-                gridObj.pieceForRepainting = pressed;
+                gridObj.pieceForRepainting.add(pressed);
                 gridObj.repaint(pressed.getX() * gridObj.rectWid, pressed.getY() * gridObj.rectHei, gridObj.rectWid,
                         gridObj.rectHei);
                 lastPressed = pressed;
