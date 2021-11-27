@@ -122,7 +122,6 @@ public class DrawGrid extends JPanel {
             Rectangle2D rect;
             Piece piece = null;
 
-
             for (int y = 0; y < grid.size(); y++){
                 for (int x = 0; x < grid.get(y).size(); x++){
                     rect = grid.get(y).get(x).getRect();
