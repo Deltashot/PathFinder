@@ -65,7 +65,7 @@ public class DrawGrid extends JPanel {
         g2d.draw(tempRect);
         this.startPiece = startPiece;
 
-        Piece endPiece = gridPieces.get(yAxisPieces - 1).get(xAxisPieces - 1);
+        Piece endPiece = gridPieces.get(xAxisPieces - 1).get(yAxisPieces - 1);
         endPiece.setType(3);
         tempRect = endPiece.getRect();
         g2d.setColor(endPiece.getColor());
@@ -79,9 +79,9 @@ public class DrawGrid extends JPanel {
         if (!gridPieces.isEmpty())
             System.out.println("[ERROR] there are already pieces when creating the grid wtf?");
 
-        for (int y = 0; y < yAxisPieces; y++) {
+        for (int x = 0; x < xAxisPieces; x++) {
             ArrayList<Piece> tempArr = new ArrayList<>();
-            for (int x = 0; x < xAxisPieces; x++) {
+            for (int y = 0; y < yAxisPieces; y++) {
                 Rectangle2D rect = new Rectangle2D.Double(x * rectX, y * rectY, rectWid, rectHei);
                 g2d.setColor(Color.WHITE);
                 g2d.fill(rect);
@@ -106,16 +106,20 @@ public class DrawGrid extends JPanel {
     }
 
     public void DrawShortestPath(ArrayList<ArrayList<Piece>> grid, ArrayList<QueuePiece> path){
-        /*
         for (int i = 1; i < path.size(); i++){
-            grid.get(yc).get(xc).setType(4);//now BLOCKED
+            QueuePiece curPiece = path.get(i);
 
-            gridObj.pieceForRepainting.add(grid.get(yc).get(xc));
-            gridObj.paintImmediately(grid.get(yc).get(xc).getX() * gridObj.rectWid, grid.get(yc).get(xc).getY() * gridObj.rectHei, gridObj.rectWid,
-                    gridObj.rectHei);
+            grid.get(curPiece.getX()).get(curPiece.getY()).setType(6);//display shortest path type
+
+            pieceForRepainting.add(grid.get(curPiece.getX()).get(curPiece.getY()));
+            paintImmediately(curPiece.getX() * rectWid, curPiece.getY() * rectHei, rectWid,
+                    rectHei);
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
-         */
     }
 
     class GridListeners implements MouseListener, MouseMotionListener{
@@ -137,11 +141,11 @@ public class DrawGrid extends JPanel {
             Rectangle2D rect;
             Piece piece = null;
 
-            for (int y = 0; y < grid.size(); y++){
-                for (int x = 0; x < grid.get(y).size(); x++){
-                    rect = grid.get(y).get(x).getRect();
+            for (int x = 0; x < grid.size(); x++){
+                for (int y = 0; y < grid.get(x).size(); y++){
+                    rect = grid.get(x).get(y).getRect();
                     if (rect.contains(xPos, yPos)){
-                        piece = grid.get(y).get(x);
+                        piece = grid.get(x).get(y);
                         return piece;
                     }
                 }

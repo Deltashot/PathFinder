@@ -47,32 +47,35 @@ public class BreadthFirst{
 
             QueuePiece curr = q.poll();//poll or remove. Same thing
 
+
             for (int i = 0; i < 4; i++)//for each direction
             {
-                if ((curr.getX() + dx[i] >= 0 && curr.getX() + dx[i] < grid.size()) && (curr.getY() + dy[i] >= 0 && curr.getY() + dy[i] < grid.get(0).size())) {
+                if ((curr.getX() + dx[i] >= 0 && curr.getX() + dx[i] < grid.size()) &&
+                        (curr.getY() + dy[i] >= 0 && curr.getY() + dy[i] < grid.get(0).size())) {
                     //Checked if x and y are correct. ALL IN 1 GO
                     int xc = curr.getX() + dx[i];//Setting current x coordinate
                     int yc = curr.getY() + dy[i];//Setting current y coordinate
-                    if (grid.get(yc).get(xc).getType() == 3)//Destination found
+                    if (grid.get(xc).get(yc).getType() == 3)//Destination found
                     {
-                        System.out.println("printing shortest route" + curr.getPathString());
+                        //System.out.println("[DEBUG] printing shortest route" + curr.getPathString());
                         gridObj.DrawShortestPath(grid, curr.getPath());
                         return;
-                    } else if (grid.get(yc).get(xc).getType() == 0)//Movable. Can't return here again so setting it to 'B' now
+                    } else if (grid.get(xc).get(yc).getType() == 0)//Movable. Can't return here again so setting it to 'B' now
                     {
-                        grid.get(yc).get(xc).setType(4);//now BLOCKED
+                        grid.get(xc).get(yc).setType(4);//now BLOCKED
                         QueuePiece temp = new QueuePiece(xc, yc);
                         temp.AddParent(new ArrayList<QueuePiece>(previous_), temp);
                         q.add(temp);//Adding current coordinates to the queue
 
                         //paint the piece
-                        gridObj.pieceForRepainting.add(grid.get(yc).get(xc));
-                        gridObj.paintImmediately(grid.get(yc).get(xc).getX() * gridObj.rectWid, grid.get(yc).get(xc).getY() * gridObj.rectHei, gridObj.rectWid,
+                        gridObj.pieceForRepainting.add(grid.get(xc).get(yc));
+                        gridObj.paintImmediately(temp.getX() * gridObj.rectWid,
+                                temp.getY() * gridObj.rectHei, gridObj.rectWid,
                                 gridObj.rectHei);
 
                         //wait some time so it doesn't go tooo fast
                         try {
-                            Thread.sleep(12);
+                            Thread.sleep(25);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

@@ -1,4 +1,5 @@
 package com.app;
+import com.app.DrawGrid;
 import com.app.algorithms.BreadthFirst;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ public class MainFunction{
     private static JFrame frame;
     //number of elements in X and Y axis
     private static final int gridWid = 10;
-    private static final int gridHei = 10;
+    private static final int gridHei = 5;
 
     public static void main(String args[]){
         frame = new JFrame("Pathfinding");
