@@ -1,4 +1,4 @@
-package com.app;
+package com.app.Objects;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -55,8 +55,7 @@ public class Piece {
     }
 
     private Color Colors(int type){
-        /**
-         * @param type used for differenciating the type of the current cell
+        /** type used for differentiating the type of the current cell
          *             type 0: empty cell (default value), white
          *             type 1: wall, darkGray
          *             type 2: start, red

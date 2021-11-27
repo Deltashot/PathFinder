@@ -1,6 +1,5 @@
 package com.app;
-import com.app.DrawGrid;
-import com.app.algorithms.BreadthFirst;
+import com.app.Algorithms.BreadthFirst;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -10,13 +9,13 @@ public class MainFunction{
     private static DrawGrid grid;
     private static JFrame frame;
     //number of elements in X and Y axis
-    private static final int gridWid = 10;
-    private static final int gridHei = 5;
+    private static final int gridWid = Settings.GRID_WID;
+    private static final int gridHei = Settings.GRID_HEI;
 
     public static void main(String args[]){
         frame = new JFrame("Pathfinding");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200,1500);
+        frame.setSize(Settings.WINDOW_WID, Settings.WINDOW_HEI);
 
         grid = new DrawGrid();
         grid.createAndShowGui(gridWid, gridHei);

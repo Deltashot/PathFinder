@@ -1,7 +1,8 @@
-package com.app.algorithms;
+package com.app.Algorithms;
 
 import com.app.DrawGrid;
-import com.app.Piece;
+import com.app.Objects.Piece;
+import com.app.Objects.QueuePiece;
 
 import java.util.*;
 
@@ -72,13 +73,6 @@ public class BreadthFirst{
                         gridObj.paintImmediately(temp.getX() * gridObj.rectWid,
                                 temp.getY() * gridObj.rectHei, gridObj.rectWid,
                                 gridObj.rectHei);
-
-                        //wait some time so it doesn't go tooo fast
-                        try {
-                            Thread.sleep(25);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }
                 }
             }

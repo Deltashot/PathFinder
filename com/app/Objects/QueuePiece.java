@@ -1,4 +1,4 @@
-package com.app.algorithms;
+package com.app.Objects;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ public class QueuePiece {
     private int y = 0;
     private ArrayList<QueuePiece> visitedPieces = new ArrayList<>();
 
-    QueuePiece(int x, int y){
+    public QueuePiece(int x, int y){
         this.x = x;
         this.y = y;
     }

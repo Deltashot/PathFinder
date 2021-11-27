@@ -1,6 +1,7 @@
 package com.app;
 
-import com.app.algorithms.QueuePiece;
+import com.app.Objects.Piece;
+import com.app.Objects.QueuePiece;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,13 +12,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class DrawGrid extends JPanel {
-    public ArrayList<ArrayList<Piece>> gridPieces = new ArrayList<>();
-    public Piece startPiece;
+    protected ArrayList<ArrayList<Piece>> gridPieces = new ArrayList<>();
+    protected Piece startPiece;
 
     private int xAxisPieces;
     private int yAxisPieces;
 
-    public final int rectWid = 40;
+    public final int rectWid = Settings.RECT_WID;
     public final int rectHei = rectWid;
     private final int rectX = rectWid;
     private final int rectY = rectHei;
@@ -37,6 +38,12 @@ public class DrawGrid extends JPanel {
                 g2d.draw(tempPiece.getRect());
             }
             pieceForRepainting.clear();
+            //wait some time so it doesn't go tooo fast
+            try {
+                Thread.sleep(Settings.VISUALIZE_SPEED);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } else if (!gridDrawn) {
             DrawGrid(g);
             gridDrawn = true;
@@ -115,7 +122,7 @@ public class DrawGrid extends JPanel {
             paintImmediately(curPiece.getX() * rectWid, curPiece.getY() * rectHei, rectWid,
                     rectHei);
             try {
-                Thread.sleep(25);
+                Thread.sleep(Settings.SHORTEST_VISUALIZE_SPEED);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
