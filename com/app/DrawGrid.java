@@ -1,5 +1,7 @@
 package com.app;
 
+import com.app.algorithms.QueuePiece;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -15,7 +17,7 @@ public class DrawGrid extends JPanel {
     private int xAxisPieces;
     private int yAxisPieces;
 
-    public final int rectWid = 30;
+    public final int rectWid = 40;
     public final int rectHei = rectWid;
     private final int rectX = rectWid;
     private final int rectY = rectHei;
@@ -101,6 +103,19 @@ public class DrawGrid extends JPanel {
                 yAxisPieces = yAxisPieces_;
             }
         });
+    }
+
+    public void DrawShortestPath(ArrayList<ArrayList<Piece>> grid, ArrayList<QueuePiece> path){
+        /*
+        for (int i = 1; i < path.size(); i++){
+            grid.get(yc).get(xc).setType(4);//now BLOCKED
+
+            gridObj.pieceForRepainting.add(grid.get(yc).get(xc));
+            gridObj.paintImmediately(grid.get(yc).get(xc).getX() * gridObj.rectWid, grid.get(yc).get(xc).getY() * gridObj.rectHei, gridObj.rectWid,
+                    gridObj.rectHei);
+        }
+
+         */
     }
 
     class GridListeners implements MouseListener, MouseMotionListener{

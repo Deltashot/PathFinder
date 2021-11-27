@@ -4,19 +4,18 @@ import com.app.algorithms.BreadthFirst;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class MainFunction{
     private static DrawGrid grid;
     private static JFrame frame;
     //number of elements in X and Y axis
-    private static final int gridWid = 20;
-    private static final int gridHei = 20;
+    private static final int gridWid = 10;
+    private static final int gridHei = 10;
 
     public static void main(String args[]){
         frame = new JFrame("Pathfinding");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200,800);
+        frame.setSize(1200,1500);
 
         grid = new DrawGrid();
         grid.createAndShowGui(gridWid, gridHei);
@@ -34,7 +33,6 @@ public class MainFunction{
 
         frame.getContentPane().add(p);
         frame.setVisible(true);
-
     }
 
     static class ButtonListener implements ActionListener{

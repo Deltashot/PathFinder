@@ -3,22 +3,19 @@ package com.app.algorithms;
 import com.app.DrawGrid;
 import com.app.Piece;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
-public class BreadthFirst {
+public class BreadthFirst{
     static int[] dx={1,-1,0,0};//right, left, NA, NA
     static int[] dy={0,0,1,-1};//NA, NA, bottom, top
 
     public static void Start(Piece startPiece, ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj) {
         // static int r,c,s1,s2,f1,f2;//Rows, Columns, Start Coordinates, Finish Coordinates
-        DrawGrid drawGrid = new DrawGrid();
+        Queue<QueuePiece> q = new LinkedList<>();
+        //int[] start = {startPiece.getX(), startPiece.getY()};//Start Coordinates
+        QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY());
+        start.AddParent(new ArrayList<>(), start);
 
-        Queue<int[]> q = new LinkedList<int[]>();
-        int[] start = {startPiece.getX(), startPiece.getY()};//Start Coordinates
         q.add(start);//Adding start to the queue since we're already visiting it
         //startPiece.setType(4);
 
@@ -33,32 +30,49 @@ public class BreadthFirst {
         }
 
         while (q.peek() != null) {
-            int[] curr = q.poll();//poll or remove. Same thing
+            /**
+             * creating an unmodifiable instance of the last list selected, so it doesn't modify when for example if
+             * there is a grid with this layout, where S is start, E is empty and F is finish:
+             *
+             *                                  S E
+             *                                  E F
+             *
+             * when the list starts at S it moves to right and E is added to the list so if we move down we get the list
+             * with S and E but we should be getting only S instead, so this is what this code does, only getting S
+             * instead of the all passed elements in the lists
+             */
+
+            ArrayList<QueuePiece> previous = q.peek().getPath();
+            List<QueuePiece> previous_ = Collections.unmodifiableList(new ArrayList<>(previous));
+
+            QueuePiece curr = q.poll();//poll or remove. Same thing
 
             for (int i = 0; i < 4; i++)//for each direction
             {
-                //checking up right down left
-                if ((curr[0] + dx[i] >= 0 && curr[0] + dx[i] < grid.size()) && (curr[1] + dy[i] >= 0 && curr[1] + dy[i] < grid.get(0).size())) {
+                if ((curr.getX() + dx[i] >= 0 && curr.getX() + dx[i] < grid.size()) && (curr.getY() + dy[i] >= 0 && curr.getY() + dy[i] < grid.get(0).size())) {
                     //Checked if x and y are correct. ALL IN 1 GO
-                    int xc = curr[0] + dx[i];//Setting current x coordinate
-                    int yc = curr[1] + dy[i];//Setting current y coordinate
+                    int xc = curr.getX() + dx[i];//Setting current x coordinate
+                    int yc = curr.getY() + dy[i];//Setting current y coordinate
                     if (grid.get(yc).get(xc).getType() == 3)//Destination found
                     {
-                        //System.out.println(xc+" "+yc);
-                        System.out.println("Shortest route found");
+                        System.out.println("printing shortest route" + curr.getPathString());
+                        gridObj.DrawShortestPath(grid, curr.getPath());
                         return;
                     } else if (grid.get(yc).get(xc).getType() == 0)//Movable. Can't return here again so setting it to 'B' now
                     {
-                        //System.out.println(xc+" "+yc);
                         grid.get(yc).get(xc).setType(4);//now BLOCKED
-                        int[] temp = {xc, yc};
+                        QueuePiece temp = new QueuePiece(xc, yc);
+                        temp.AddParent(new ArrayList<QueuePiece>(previous_), temp);
                         q.add(temp);//Adding current coordinates to the queue
 
+                        //paint the piece
                         gridObj.pieceForRepainting.add(grid.get(yc).get(xc));
                         gridObj.paintImmediately(grid.get(yc).get(xc).getX() * gridObj.rectWid, grid.get(yc).get(xc).getY() * gridObj.rectHei, gridObj.rectWid,
                                 gridObj.rectHei);
+
+                        //wait some time so it doesn't go tooo fast
                         try {
-                            Thread.sleep(50);
+                            Thread.sleep(12);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -67,6 +81,5 @@ public class BreadthFirst {
             }
         }
         System.out.println("no route possible");
-
     }
 }
