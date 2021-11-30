@@ -14,17 +14,22 @@ import java.util.ArrayList;
 public class DrawGrid extends JPanel {
     protected ArrayList<ArrayList<Piece>> gridPieces = new ArrayList<>();
     protected Piece startPiece;
+    public int visualize_speed = 0;
+
+    private boolean gridDrawn = false;
+    private boolean repaintEntireGrid = false;
 
     private int xAxisPieces;
     private int yAxisPieces;
 
-    public final int rectWid = Settings.RECT_WID;
-    public final int rectHei = rectWid;
+    private final int rectWid = Settings.RECT_WID;
+    private final int rectHei = rectWid;
     private final int rectX = rectWid;
     private final int rectY = rectHei;
 
+    private Piece wasPreviousPieceUnique; //by unique it means start or end position, because when you hold the left click and move the mouse the start position has to move with it
+
     public ArrayList<Piece> pieceForRepainting = new ArrayList<>();
-    private boolean gridDrawn = false;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -40,11 +45,13 @@ public class DrawGrid extends JPanel {
             pieceForRepainting.clear();
             //wait some time so it doesn't go tooo fast
             try {
-                Thread.sleep(Settings.VISUALIZE_SPEED);
+                Thread.sleep(visualize_speed);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } else if (!gridDrawn) {
+        }
+
+        else if (!gridDrawn) {
             DrawGrid(g);
             gridDrawn = true;
             drawStartPositions(g);
@@ -112,13 +119,13 @@ public class DrawGrid extends JPanel {
         });
     }
 
-    public void DrawShortestPath(ArrayList<ArrayList<Piece>> grid, ArrayList<QueuePiece> path){
+    public void DrawShortestPath(ArrayList<QueuePiece> path){
         for (int i = 1; i < path.size(); i++){
             QueuePiece curPiece = path.get(i);
 
-            grid.get(curPiece.getX()).get(curPiece.getY()).setType(6);//display shortest path type
+            gridPieces.get(curPiece.getX()).get(curPiece.getY()).setType(6);//display shortest path type
 
-            pieceForRepainting.add(grid.get(curPiece.getX()).get(curPiece.getY()));
+            pieceForRepainting.add(gridPieces.get(curPiece.getX()).get(curPiece.getY()));
             paintImmediately(curPiece.getX() * rectWid, curPiece.getY() * rectHei, rectWid,
                     rectHei);
             try {
@@ -129,12 +136,48 @@ public class DrawGrid extends JPanel {
         }
     }
 
+    protected void ClearBoard(){
+        visualize_speed = 0;
+
+        for (ArrayList<Piece> colPieceArr : gridPieces){
+            for (Piece curPiece : colPieceArr)
+                if (curPiece.getType() == 4 || curPiece.getType() == 6 || curPiece.getType() == 1)
+                    curPiece.setType(0);
+            pieceForRepainting.addAll(colPieceArr);
+        }
+        paintImmediately(0, 0, Settings.GRID_WID * rectWid,
+                Settings.GRID_HEI * rectHei);
+
+    }
+
+    protected void ClearPath(){
+        visualize_speed = 0;
+
+        for (ArrayList<Piece> colPieceArr : gridPieces){
+            for (Piece curPiece : colPieceArr)
+                if (curPiece.getType() == 4 || curPiece.getType() == 6)
+                    curPiece.setType(0);
+            pieceForRepainting.addAll(colPieceArr);
+        }
+        paintImmediately(0, 0, Settings.GRID_WID * rectWid,
+                Settings.GRID_HEI * rectHei);
+    }
+
+    public int getRectWid(){
+        return rectWid;
+    }
+
+    public int getRectHei(){
+        return rectHei;
+    }
+
     class GridListeners implements MouseListener, MouseMotionListener{
         private ArrayList<ArrayList<Piece>> grid;
         private DrawGrid gridObj;
-        private Graphics2D g2d;
         private Piece lastPressed;
-        private boolean pressedLeftClick;
+
+        private boolean mouseHeld; //for knowing if the mouse is being held down
+        private boolean movedFromUniquePiece; //its hard to press once without holding so had to add special case for it (for startPiece and endPiece)
 
         GridListeners(ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj){
             this.grid = grid;
@@ -142,7 +185,6 @@ public class DrawGrid extends JPanel {
             gridObj.addMouseListener(this);
             gridObj.addMouseMotionListener(this);
         }
-
 
         private Piece PressedPiece(int xPos, int yPos){
             Rectangle2D rect;
@@ -162,12 +204,7 @@ public class DrawGrid extends JPanel {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            //System.out.println("Holding mouse");
-
-            /**
-             * @TODO seems to be getting the wrong mouse position or something
-             *
-             */
+            mouseHeld = true;
             PiecePressed(e);
         }
 
@@ -177,29 +214,84 @@ public class DrawGrid extends JPanel {
         }
 
         private void PiecePressed(MouseEvent e) {
-            if (e.getButton() == 1 || pressedLeftClick) {
-                pressedLeftClick = true;
                 Piece pressed = PressedPiece(e.getX(), e.getY());
+                if (e.getButton() != 1 && !mouseHeld || pressed == null)
+                    return;
 
                 if (PressedPiece(e.getX(), e.getY()) == lastPressed)
                     return;
 
                 if (pressed.getType() == 0) {
-                    pressed.setType(1);
-                } else {
+                    IfPieceEmpty(pressed);
+                } else if (pressed.getType() == 1) {
                     pressed.setType(0);
+                    wasPreviousPieceUnique = null;
+                } else if ((pressed.getType() == 2 || pressed.getType() == 3) && wasPreviousPieceUnique == null && !mouseHeld){
+                    wasPreviousPieceUnique = pressed;
+                    return;
                 }
                 gridObj.pieceForRepainting.add(pressed);
                 gridObj.repaint(pressed.getX() * gridObj.rectWid, pressed.getY() * gridObj.rectHei, gridObj.rectWid,
                         gridObj.rectHei);
                 lastPressed = pressed;
+        }
+
+        //if the piece is empty and is being pressed do the following function
+        private void IfPieceEmpty(Piece pressed) {
+            if (wasPreviousPieceUnique == null) {
+                pressed.setType(1);
+            }
+            else if (!mouseHeld)
+            {
+                System.out.println(movedFromUniquePiece);
+                pressed.setType(wasPreviousPieceUnique.getType());
+                wasPreviousPieceUnique.setType(0);
+
+                pieceForRepainting.add(pressed);
+                pieceForRepainting.add(wasPreviousPieceUnique);
+
+                gridObj.paintImmediately(wasPreviousPieceUnique.getX() * gridObj.rectWid, wasPreviousPieceUnique.getY() * gridObj.rectHei, gridObj.rectWid,
+                        gridObj.rectHei);
+                gridObj.paintImmediately(pressed.getX() * gridObj.rectWid, pressed.getY() * gridObj.rectHei, gridObj.rectWid,
+                        gridObj.rectHei);
+
+                if (pressed.getType() == 2)
+                    startPiece = pressed;
+
+                wasPreviousPieceUnique = null;
+            }
+            //checking so it doesn't repaint the same piece while the cursor is held on the piece that is unique (startpiece, endpiece)
+            else if (lastPressed != pressed){
+                System.out.println("hello there " + movedFromUniquePiece);
+                movedFromUniquePiece = true;
+
+                pressed.setType(wasPreviousPieceUnique.getType());
+                wasPreviousPieceUnique.setType(0);
+
+                pieceForRepainting.add(pressed);
+                pieceForRepainting.add(wasPreviousPieceUnique);
+
+                gridObj.paintImmediately(wasPreviousPieceUnique.getX() * gridObj.rectWid, wasPreviousPieceUnique.getY() * gridObj.rectHei, gridObj.rectWid,
+                        gridObj.rectHei);
+                gridObj.paintImmediately(pressed.getX() * gridObj.rectWid, pressed.getY() * gridObj.rectHei, gridObj.rectWid,
+                        gridObj.rectHei);
+
+                if (pressed.getType() == 2)
+                    startPiece = pressed;
+
+                wasPreviousPieceUnique = pressed;
             }
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
             lastPressed = null;
-            pressedLeftClick = false;
+
+            if (mouseHeld && !movedFromUniquePiece) {
+                wasPreviousPieceUnique = null;
+            }
+
+            mouseHeld = false;
         }
 
         @Override
