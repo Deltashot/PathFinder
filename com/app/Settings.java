@@ -19,6 +19,6 @@ public class Settings {
     protected static final int GRID_WID = 25;
     protected static final int GRID_HEI = 25;
     protected static final int RECT_WID = 20;
-    protected static final int VISUALIZE_SPEED = 5;
+    protected static final int VISUALIZE_SPEED = 3;
     protected static final int SHORTEST_VISUALIZE_SPEED = 5;
 }
