@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class DrawGrid extends JPanel {
     protected ArrayList<ArrayList<Piece>> gridPieces = new ArrayList<>();
     protected Piece startPiece;
+    protected Piece endPiece;
     public int visualize_speed = 0;
 
     private boolean gridDrawn = false;
@@ -28,7 +29,6 @@ public class DrawGrid extends JPanel {
     private final int rectY = rectHei;
 
     private Piece wasPreviousPieceUnique; //by unique it means start or end position, because when you hold the left click and move the mouse the start position has to move with it
-
     public ArrayList<Piece> pieceForRepainting = new ArrayList<>();
 
     @Override
@@ -55,8 +55,18 @@ public class DrawGrid extends JPanel {
             DrawGrid(g);
             gridDrawn = true;
             drawStartPositions(g);
-        } else
-            System.out.println("[DEBUG] um trying to repaint something but there is nothing to repaint?");
+        } else {
+            System.out.println("[WARRNING] um trying to repaint something but there is nothing to repaint?");
+            Graphics2D g2d = (Graphics2D) g;
+            for (ArrayList<Piece> pieces : gridPieces)
+                for (Piece piece : pieces)
+                {
+                    g2d.setColor(piece.getColor());
+                    g2d.fill(piece.getRect());
+                    g2d.setColor(Color.black);
+                    g2d.draw(piece.getRect());
+                }
+        }
 
         /**
          * @NOTE repainting the grid using DrawGrid is a bad idea because it will paint another grid on top of the first
@@ -70,16 +80,15 @@ public class DrawGrid extends JPanel {
 
         Rectangle2D tempRect;
 
-        Piece startPiece = gridPieces.get(0).get(0);
+        startPiece = gridPieces.get(0).get(0);
         startPiece.setType(2);
         tempRect = startPiece.getRect();
         g2d.setColor(startPiece.getColor());
         g2d.fill(tempRect);
         g2d.setColor(Color.black);
         g2d.draw(tempRect);
-        this.startPiece = startPiece;
 
-        Piece endPiece = gridPieces.get(xAxisPieces - 1).get(yAxisPieces - 1);
+        endPiece = gridPieces.get(xAxisPieces - 1).get(yAxisPieces - 1);
         endPiece.setType(3);
         tempRect = endPiece.getRect();
         g2d.setColor(endPiece.getColor());
@@ -214,26 +223,26 @@ public class DrawGrid extends JPanel {
         }
 
         private void PiecePressed(MouseEvent e) {
-                Piece pressed = PressedPiece(e.getX(), e.getY());
-                if (e.getButton() != 1 && !mouseHeld || pressed == null)
-                    return;
+            Piece pressed = PressedPiece(e.getX(), e.getY());
+            if (e.getButton() != 1 && !mouseHeld || pressed == null)
+                return;
 
-                if (PressedPiece(e.getX(), e.getY()) == lastPressed)
-                    return;
+            if (PressedPiece(e.getX(), e.getY()) == lastPressed)
+                return;
 
-                if (pressed.getType() == 0) {
-                    IfPieceEmpty(pressed);
-                } else if (pressed.getType() == 1) {
-                    pressed.setType(0);
-                    wasPreviousPieceUnique = null;
-                } else if ((pressed.getType() == 2 || pressed.getType() == 3) && wasPreviousPieceUnique == null && !mouseHeld){
-                    wasPreviousPieceUnique = pressed;
-                    return;
-                }
-                gridObj.pieceForRepainting.add(pressed);
-                gridObj.repaint(pressed.getX() * gridObj.rectWid, pressed.getY() * gridObj.rectHei, gridObj.rectWid,
-                        gridObj.rectHei);
-                lastPressed = pressed;
+            if (pressed.getType() == 0) {
+                IfPieceEmpty(pressed);
+            } else if (pressed.getType() == 1) {
+                pressed.setType(0);
+                wasPreviousPieceUnique = null;
+            } else if ((pressed.getType() == 2 || pressed.getType() == 3) && wasPreviousPieceUnique == null && !mouseHeld){
+                wasPreviousPieceUnique = pressed;
+                return;
+            }
+            gridObj.pieceForRepainting.add(pressed);
+            gridObj.repaint(pressed.getX() * gridObj.rectWid, pressed.getY() * gridObj.rectHei, gridObj.rectWid,
+                    gridObj.rectHei);
+            lastPressed = pressed;
         }
 
         //if the piece is empty and is being pressed do the following function
@@ -257,6 +266,8 @@ public class DrawGrid extends JPanel {
 
                 if (pressed.getType() == 2)
                     startPiece = pressed;
+                else if (pressed.getType() == 3)
+                    endPiece = pressed;
 
                 wasPreviousPieceUnique = null;
             }
@@ -278,6 +289,8 @@ public class DrawGrid extends JPanel {
 
                 if (pressed.getType() == 2)
                     startPiece = pressed;
+                else if (pressed.getType() == 3)
+                    endPiece = pressed;
 
                 wasPreviousPieceUnique = pressed;
             }
@@ -314,4 +327,3 @@ public class DrawGrid extends JPanel {
         }
     }
 }
-

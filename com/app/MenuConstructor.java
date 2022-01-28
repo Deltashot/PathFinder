@@ -6,15 +6,39 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MenuConstructor extends JPanel {
+public class MenuConstructor {
+    private Boolean state = false; //false for invisible, true for visible
+    private ArrayList<JButton> buttonList = new ArrayList<>();
     /**
-     * basic menu constructor
-     * @apiNote the listeners are not handled here unless specified
-     * @param button the button where the menu will be under
-     * @param dropDownButtons ArrayList of the dropdown buttons
-     * @param tag will do specific stuff depending on the tag if specified
+     * basic constructor for menu under the button,
+     * @apiNote the position of the buttons is handled here everything else needs to be handled by the
+     * @param panel the panel where the menu is located
+     * @param menuButton the button which the menu is located under
+     * @param inputButtonList list of the buttons
+     * @param tag a tag for special some special action
      */
-    public MenuConstructor(@NotNull JButton button, @NotNull ArrayList<Button> dropDownButtons, String tag){
+    public MenuConstructor(@NotNull JPanel panel, @NotNull JButton menuButton, @NotNull ArrayList<JButton> inputButtonList, String tag) {
+        for (int i = 0; i < inputButtonList.size(); i++) {
+            JButton curButton = inputButtonList.get(i);
+            Rectangle bounds = menuButton.getBounds();
 
+            curButton.setBounds(bounds.x, bounds.height*(1+i) + bounds.y, bounds.width, bounds.height);
+            curButton.setVisible(state);
+            panel.add(curButton);
+            buttonList.add(curButton);
+        }
+    }
+
+    /**
+     * for switching the state on and off
+     */
+    public void swapState(){
+        if (state)
+            state = false;
+        else
+            state = true;
+        for (JButton button : buttonList){
+            button.setVisible(state);
+        }
     }
 }

@@ -6,11 +6,19 @@ public class QueuePiece {
     private int x = 0;
     private int y = 0;
     private ArrayList<QueuePiece> visitedPieces = new ArrayList<>();
+    private int distance; //distance from the finish
 
     public QueuePiece(int x, int y){
         this.x = x;
         this.y = y;
     }
+
+    public QueuePiece(int x, int y, int distance) {
+        this.x = x;
+        this.y = y;
+        this.distance = distance;
+    }
+
 
     public void AddParent(ArrayList<QueuePiece> previousPath, QueuePiece visited){
         //I am not sure how or why this works but hey it prevents a memory leak and crisis prevented
@@ -38,5 +46,13 @@ public class QueuePiece {
 
     public int getY() {
         return y;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }

@@ -54,6 +54,8 @@ public class Piece {
         return type;
     }
 
+
+
     private Color Colors(int type){
         /** type used for differentiating the type of the current cell
          *             type 0: empty cell (default value), white

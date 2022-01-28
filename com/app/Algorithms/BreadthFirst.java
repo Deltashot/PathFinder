@@ -3,7 +3,6 @@ package com.app.Algorithms;
 import com.app.DrawGrid;
 import com.app.Objects.Piece;
 import com.app.Objects.QueuePiece;
-import com.app.Settings;
 
 import java.util.*;
 
@@ -11,18 +10,14 @@ public class BreadthFirst{
     static int[] dx={1,-1,0,0};//right, left, NA, NA
     static int[] dy={0,0,1,-1};//NA, NA, bottom, top
 
-    public static void Start(Piece startPiece, ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj, int visualizeSpeed) {
+    public static void start(Piece startPiece, ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj, int visualizeSpeed) {
         gridObj.visualize_speed = visualizeSpeed;
 
         Queue<QueuePiece> q = new LinkedList<>();
-        QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY()); //Start Coordinates
+        QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY()); //Start piece
         start.AddParent(new ArrayList<>(), start);
 
         q.add(start);//Adding start to the queue since we're already visiting it
-
-        gridObj.pieceForRepainting.add(startPiece);
-        gridObj.paintImmediately(startPiece.getX() * gridObj.getRectWid(), startPiece.getY() * gridObj.getRectHei(), gridObj.getRectWid(),
-                gridObj.getRectHei());
 
         while (q.peek() != null) {
             /**
@@ -33,7 +28,7 @@ public class BreadthFirst{
              *                                  E F
              *
              * when the list starts at S it moves to right and E is added to the list so if we move down we get the list
-             * with S and E but we should be getting only S instead, so this is what this code does, only getting S
+             * with S and E, but we should be getting only S instead, so this is what this code does, only getting S
              * instead of the all passed elements in the lists and melting the pc
              */
 
@@ -50,7 +45,7 @@ public class BreadthFirst{
                     int xc = curr.getX() + dx[i];//Setting current x coordinate
                     int yc = curr.getY() + dy[i];//Setting current y coordinate
 
-                    if (grid.get(xc).get(yc).getType() == 0)//Movable. Can't return here again so setting it to 'B' now
+                    if (grid.get(xc).get(yc).getType() == 0)//Movable. Can't return here again so setting it to 'Blocked' now
                     {
                         grid.get(xc).get(yc).setType(4);//now BLOCKED
                         QueuePiece temp = new QueuePiece(xc, yc);
