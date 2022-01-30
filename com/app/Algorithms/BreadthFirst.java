@@ -15,7 +15,7 @@ public class BreadthFirst{
 
         Queue<QueuePiece> q = new LinkedList<>();
         QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY()); //Start piece
-        start.AddParent(new ArrayList<>(), start);
+        start.addParent(new ArrayList<>(), start);
 
         q.add(start);//Adding start to the queue since we're already visiting it
 
@@ -32,8 +32,12 @@ public class BreadthFirst{
              * instead of the all passed elements in the lists and melting the pc
              */
 
-            ArrayList<QueuePiece> previous = q.peek().getPath();
-            List<QueuePiece> previous_ = Collections.unmodifiableList(new ArrayList<>(previous));
+            //TODO take a few small optimizations from greedy so that the basic logic matches and it wouldn't cause any
+            // weird problems in the future
+
+
+            List<QueuePiece> previous = q.peek().getPath(); //mutable
+            List<QueuePiece> previous_ = Collections.unmodifiableList(new ArrayList<>(previous)); //immutable and NO YOU CAN'T MAKE THIS MUTABLE IT WILL BREAK ANYTHING
 
             QueuePiece curr = q.poll();//poll or remove. Same thing
 
@@ -49,7 +53,7 @@ public class BreadthFirst{
                     {
                         grid.get(xc).get(yc).setType(4);//now BLOCKED
                         QueuePiece temp = new QueuePiece(xc, yc);
-                        temp.AddParent(new ArrayList<QueuePiece>(previous_), temp);
+                        temp.addParent(new ArrayList<>(previous_), temp);
                         q.add(temp);//Adding current coordinates to the queue
 
                         //paint the piece
@@ -62,7 +66,7 @@ public class BreadthFirst{
                     else if (grid.get(xc).get(yc).getType() == 3)//Destination found
                     {
                         //System.out.println("[DEBUG] printing shortest route" + curr.getPathString());
-                        gridObj.DrawShortestPath(curr.getPath());
+                        gridObj.DrawShortestPath(new ArrayList<>(curr.getPath()));
                         gridObj.visualize_speed = 0;
                         return;
                     }
