@@ -77,7 +77,6 @@ public class DrawGrid extends JPanel {
 
     private void drawStartPositions(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-
         Rectangle2D tempRect;
 
         startPiece = gridPieces.get(0).get(0);
@@ -133,10 +132,10 @@ public class DrawGrid extends JPanel {
             QueuePiece curPiece = path.get(i);
 
             gridPieces.get(curPiece.getX()).get(curPiece.getY()).setType(6);//display shortest path type
-
             pieceForRepainting.add(gridPieces.get(curPiece.getX()).get(curPiece.getY()));
             paintImmediately(curPiece.getX() * rectWid, curPiece.getY() * rectHei, rectWid,
                     rectHei);
+
             try {
                 Thread.sleep(Settings.SHORTEST_VISUALIZE_SPEED);
             } catch (InterruptedException e) {

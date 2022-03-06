@@ -26,7 +26,6 @@ public class Greedy {
     private static int endX;
     private static int endY;
 
-
     public static void start(Piece startPiece, Piece endPiece, ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj, int visualizeSpeed){
         gridObj.visualize_speed = visualizeSpeed;
         endX = endPiece.getX();
@@ -42,20 +41,12 @@ public class Greedy {
         });
         QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY(), calDis(startPiece.getX(), startPiece.getY())); //Start piece
         start.addParent(new ArrayList<>(), start);
-
         q.add(start);//Adding start to the queue since we're already visiting it
-        int test = 0;
+
         while (!q.isEmpty()){
-            test++;
-            if (test == 500)
-            {
-                test = test;
-            }
             List<QueuePiece> previous_ = Collections.unmodifiableList(q.peek().getPath());
 
-            QueuePiece curr = q.peek();
-            q.remove(curr);
-
+            QueuePiece curr = q.poll();
             int curX = curr.getX();
             int curY = curr.getY();
 
@@ -65,18 +56,18 @@ public class Greedy {
                     //Checked if x and y are correct. ALL IN 1 GO
                     int xc = curX + dx[i];//Setting current x coordinate
                     int yc = curY + dy[i];//Setting current y coordinate
-                    int type = grid.get(xc).get(yc).getType(); //the type of field that the
+                    int type = grid.get(xc).get(yc).getType();//type of current field
 
                     if (type == 0)//add the piece to the list for it to be processed later
                     {
                         QueuePiece temp = new QueuePiece(xc, yc, calDis(xc, yc));
                         temp.addParent(new ArrayList<>(previous_), temp);
 
+                        //prevents adding the same piece to the list thus preventing a memory leak and LOTS of unnecessary calculations
                         if (q.stream().noneMatch(o -> o.getX() == xc && o.getY() == yc))
                             q.add(temp);//Adding current coordinates to the queue
 
                     } else if (type == 3) { //Destination found
-                        //System.out.println("[DEBUG] printing shortest route" + curr.getPathString());
                         gridObj.DrawShortestPath(new ArrayList<>(curr.getPath()));
                         gridObj.visualize_speed = 0;
                         return;
@@ -101,155 +92,14 @@ public class Greedy {
         System.out.println("no route possible");
         gridObj.visualize_speed = 0;
     }
-
-
-
-
-    /*
-    public static void start(Piece startPiece, Piece endPiece, ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj, int visualizeSpeed){
-        gridObj.visualize_speed = visualizeSpeed;
-        endX = endPiece.getX();
-        endY = endPiece.getY();
-
-        PriorityQueue<QueuePiece> q = new PriorityQueue<>();
-
-        QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY(), calDis(startPiece.getX(), startPiece.getY())); //Start piece
-        start.AddParent(new ArrayList<>(), start);
-
-        q.add(start);//Adding start to the queue since we're already visiting it
-        int test = 0;
-        while (q.peek() != null){
-            test++;
-            List<QueuePiece> previous_ = Collections.unmodifiableList(q.peek().getPath());
-
-            QueuePiece curr = q.peek();
-            q.remove(curr);
-
-            int curX = curr.getX();
-            int curY = curr.getY();
-
-            for (int i = 0; i < 4; i++) { //for each direction
-                if ((curX + dx[i] >= 0 && curX + dx[i] < grid.size()) &&
-                        (curY + dy[i] >= 0 && curY + dy[i] < grid.get(0).size())) {
-                    //Checked if x and y are correct. ALL IN 1 GO
-                    int xc = curX + dx[i];//Setting current x coordinate
-                    int yc = curY + dy[i];//Setting current y coordinate
-                    int type = grid.get(xc).get(yc).getType(); //the type of field that the
-
-                    if (type == 0)//add the piece to the list for it to be processed later
-                    {
-                        QueuePiece temp = new QueuePiece(xc, yc, calDis(xc, yc));
-                        temp.AddParent(new ArrayList<>(previous_), temp);
-                        q.add(temp);//Adding current coordinates to the queue
-                        q.stream().sorted();
-
-                    } else if (type == 3) { //Destination found
-                        //System.out.println("[DEBUG] printing shortest route" + curr.getPathString());
-                        gridObj.DrawShortestPath(new ArrayList<>(curr.getPath()));
-                        gridObj.visualize_speed = 0;
-                        return;
-                    }
-                }
-            }
-
-            //move to the closest piece
-            QueuePiece cPiece = q.peek(); //closest piece to the end
-            int cPieceX = cPiece.getX();
-            int cPieceY = cPiece.getY();
-            grid.get(cPieceX).get(cPieceY).setType(4);//now BLOCKED
-
-            //paint the piece
-            gridObj.pieceForRepainting.add(grid.get(cPieceX).get(cPieceY));
-            gridObj.paintImmediately(cPieceX * gridObj.getRectWid(),
-                    cPieceY * gridObj.getRectHei(), gridObj.getRectWid(),
-                    gridObj.getRectHei());
-        }
-        System.out.println("no route possible");
-        gridObj.visualize_speed = 0;
-    }
-
-     */
 
     private static int calDis(QueuePiece piece){ //calculate distance from current piece to end
         return calDis(piece.getX(), piece.getY());
     }
 
-    private static int calDis(int x, int y){ //calculate distance from current piece to end
+    private static int calDis(int x, int y){ //calculate distance from current piece to end piece
         return Math.abs(x - endX) + Math.abs(y - endY);
     }
-
-    /*
-    public static void startOld(Piece startPiece, Piece endPiece, ArrayList<ArrayList<Piece>> grid, DrawGrid gridObj, int visualizeSpeed){
-        gridObj.visualize_speed = visualizeSpeed;
-        endX = endPiece.getX();
-        endY = endPiece.getY();;
-
-        ArrayList<QueuePiece> q = new ArrayList<>();
-        QueuePiece start = new QueuePiece(startPiece.getX(), startPiece.getY(), calDis(startPiece.getX(), startPiece.getY())); //Start piece
-        start.addParent(new ArrayList<>(), start);
-
-        q.add(start);//Adding start to the queue since we're already visiting it
-        int test = 0;
-        while (!q.isEmpty()){
-            test++;
-            LinkedList<QueuePiece> previous_ = Collections.unmodifiableList(q.get(0).getPath());
-
-            QueuePiece curr = q.get(0);
-            q.remove(curr);
-
-            int curX = curr.getX();
-            int curY = curr.getY();
-
-            for (int i = 0; i < 4; i++) { //for each direction
-                if ((curX + dx[i] >= 0 && curX + dx[i] < grid.size()) &&
-                        (curY + dy[i] >= 0 && curY + dy[i] < grid.get(0).size())) {
-                    //Checked if x and y are correct. ALL IN 1 GO
-                    int xc = curX + dx[i];//Setting current x coordinate
-                    int yc = curY + dy[i];//Setting current y coordinate
-                    int type = grid.get(xc).get(yc).getType(); //the type of field that the
-
-                    if (type == 0)//add the piece to the list for it to be processed later
-                    {
-                        QueuePiece temp = new QueuePiece(xc, yc, calDis(xc, yc));
-                        temp.addParent(new ArrayList<>(previous_), temp);
-                        q.add(temp);//Adding current coordinates to the queue
-
-                    } else if (type == 3) { //Destination found
-                        //System.out.println("[DEBUG] printing shortest route" + curr.getPathString());
-                        gridObj.DrawShortestPath(curr.getPath());
-                        gridObj.visualize_speed = 0;
-                        return;
-                    }
-                }
-            }
-
-            q.sort((o1, o2) -> {
-                Integer o1d = o1.getDistance();
-                Integer o2d = o2.getDistance();
-                return o1d.compareTo(o2d);
-            });
-
-            //move to the closest piece
-            QueuePiece cPiece = q.get(0); //closest piece to the end
-            int cPieceX = cPiece.getX();
-            int cPieceY = cPiece.getY();
-            grid.get(cPieceX).get(cPieceY).setType(4);//now BLOCKED
-
-            //paint the piece
-            gridObj.pieceForRepainting.add(grid.get(cPieceX).get(cPieceY));
-            gridObj.paintImmediately(cPieceX * gridObj.getRectWid(),
-                    cPieceY * gridObj.getRectHei(), gridObj.getRectWid(),
-                    gridObj.getRectHei());
-
-        }
-
-        System.out.println("no route possible");
-        gridObj.visualize_speed = 0;
-    }
-
-
-
-     */
 }
 
 

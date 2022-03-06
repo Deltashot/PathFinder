@@ -1,4 +1,5 @@
 package com.app;
+import com.app.Algorithms.Bidirectional;
 import com.app.Algorithms.BreadthFirst;
 import com.app.Algorithms.Greedy;
 
@@ -114,11 +115,14 @@ public class MainFunction{
                     algorithmsMenu.swapState();
                     break;
                 case "visualize":
-                    if (currentAlgorithm.equals("breadth"))
+                    if (currentAlgorithm.equals("breadth")) {
                         BreadthFirst.start(grid.startPiece, grid.gridPieces, grid, Settings.VISUALIZE_SPEED);
-
+                    }
                     else if (currentAlgorithm.equals("greedy")){
                         Greedy.start(grid.startPiece, grid.endPiece, grid.gridPieces, grid, Settings.VISUALIZE_SPEED);
+                    }
+                    else if (currentAlgorithm.equals("bi_swarm")) {
+                        Bidirectional.start(grid.startPiece, grid.endPiece, grid.gridPieces, grid, Settings.VISUALIZE_SPEED);
                     }
                     else{
                         System.out.println("[ERROR] current algorithm doesn't exist, algorithm: " + currentAlgorithm);

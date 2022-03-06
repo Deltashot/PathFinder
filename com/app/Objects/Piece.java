@@ -8,6 +8,7 @@ public class Piece {
     private int x = 0;
     private int y = 0;
     private int type = 0;
+    private int startType;
 
     public Piece(Rectangle2D rect, int x, int y){
         this.rect = rect;
@@ -48,6 +49,14 @@ public class Piece {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public void setStartType(int startType){
+        this.startType = startType;
+    }
+
+    public Integer getStartType(){
+        return startType;
     }
 
     public Integer getType() {
