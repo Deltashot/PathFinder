@@ -1,5 +1,7 @@
 package com.app;
 
+import com.app.Animations.Animator;
+import com.app.Animations.AnimatorHelper;
 import com.app.Objects.Piece;
 import com.app.Objects.QueuePiece;
 
@@ -18,8 +20,6 @@ public class DrawGrid extends JPanel {
     public int visualize_speed = 0;
 
     private boolean gridDrawn = false;
-    private boolean repaintEntireGrid = false;
-
     private int xAxisPieces;
     private int yAxisPieces;
 
@@ -50,13 +50,12 @@ public class DrawGrid extends JPanel {
                 e.printStackTrace();
             }
         }
-
         else if (!gridDrawn) {
             DrawGrid(g);
             gridDrawn = true;
             drawStartPositions(g);
         } else {
-            System.out.println("[WARRNING] um trying to repaint something but there is nothing to repaint?");
+            //System.out.println("[WARRNING] um trying to repaint something but there is nothing to repaint?");
             Graphics2D g2d = (Graphics2D) g;
             for (ArrayList<Piece> pieces : gridPieces)
                 for (Piece piece : pieces)
@@ -75,17 +74,11 @@ public class DrawGrid extends JPanel {
          */
     }
 
-    private void drawStartPositions(Graphics g) {
+    private void oldDrawStartPositions(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D tempRect;
 
-        startPiece = gridPieces.get(0).get(0);
-        startPiece.setType(2);
-        tempRect = startPiece.getRect();
-        g2d.setColor(startPiece.getColor());
-        g2d.fill(tempRect);
-        g2d.setColor(Color.black);
-        g2d.draw(tempRect);
+        //it seems I took startPiece out of here accidentally
 
         endPiece = gridPieces.get(xAxisPieces - 1).get(yAxisPieces - 1);
         endPiece.setType(3);
@@ -94,6 +87,41 @@ public class DrawGrid extends JPanel {
         g2d.fill(tempRect);
         g2d.setColor(Color.black);
         g2d.draw(tempRect);
+    }
+
+    private void drawStartPositions(Graphics g) {
+        //initial setup
+        startPiece = gridPieces.get(0).get(0);
+        startPiece.setType(2);
+        endPiece = gridPieces.get(xAxisPieces - 1).get(yAxisPieces - 1);
+        //endPiece.setType(3);
+        JPanel startPPanel = new JPanel();
+        JPanel endPPanel = new JPanel();
+        add(endPPanel);
+        add(startPPanel);
+        endPPanel.setBackground(Color.orange);
+        startPPanel.setBackground(startPiece.getColor());
+        endPiece.setStartType(0);
+
+        Rectangle from = AnimatorHelper.calculateCenter(endPiece);
+        Rectangle to = AnimatorHelper.calculateEndPos(endPiece);
+
+        Animator animator = new Animator(endPPanel, from, to, 5000);
+        animator.ripple();
+
+        /*
+        Rectangle from = new Rectangle((Settings.RECT_WID - startPiece.getX() / 2 ) / 2,
+                (Settings.RECT_WID - startPiece.getY()/2) / 2, 0, 0);
+        Rectangle to = new Rectangle(startPiece.getX() + 1,
+                startPiece.getY() + 1, Settings.RECT_WID - 1, Settings.RECT_WID - 1);
+
+        Animator animator = new Animator(startPPanel, from, to, 1000);
+        animator.RippleAnimation();
+         */
+
+
+        //AnimatorOld.Animate animate2 = new AnimatorOld.Animate(subPanel, from, to);
+        //animate2.start();
     }
 
     private ArrayList<ArrayList<Piece>> DrawGrid(Graphics g){
@@ -135,7 +163,6 @@ public class DrawGrid extends JPanel {
             pieceForRepainting.add(gridPieces.get(curPiece.getX()).get(curPiece.getY()));
             paintImmediately(curPiece.getX() * rectWid, curPiece.getY() * rectHei, rectWid,
                     rectHei);
-
             try {
                 Thread.sleep(Settings.SHORTEST_VISUALIZE_SPEED);
             } catch (InterruptedException e) {
